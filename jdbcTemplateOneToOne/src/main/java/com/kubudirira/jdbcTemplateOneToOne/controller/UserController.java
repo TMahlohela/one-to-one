@@ -42,10 +42,35 @@ public class UserController {
 
     @PutMapping("/update/{id}")
     public int updateUser( @RequestBody User user, @PathVariable("id") int id){
+
+        if (existingUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        existingUser.setFirstName(updateUser.getFirstName());
+        existingUser.setLastName(updateUser.getLastName());
+        existingUser.setEmail(updateUser.getEmail());
+
+        //save
         return userRepository.updateUser(id,user);
     }
 
+    //update
+    @PutMapping("/{userId}")
+    public ResponseEntity<User> updateUser(@PathVariable  userId, @RequestBody User updateUser) {
+        User existingUser = userService.getUserById(userId);
 
+        if (existingUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        existingUser.setFirstName(updateUser.getFirstName());
+        existingUser.setLastName(updateUser.getLastName());
+        existingUser.setEmail(updateUser.getEmail());
 
+        //save
+        userService.saveUser(existingUser);
 
+        return ResponseEntity.ok(existingUser);
+    }
 }
